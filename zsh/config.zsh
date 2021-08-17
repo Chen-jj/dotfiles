@@ -12,7 +12,7 @@ export BULLETTRAIN_NVM_SHOW=true
 # export NVM_LAZY_LOAD=true
 export NVM_AUTO_USE=true
 
-plugins=(zsh-nvm git autojump sublime history dirhistory zsh-better-npm-completion)
+plugins=(zsh-nvm git autojump sublime history dirhistory zsh-better-npm-completion zsh-autosuggestions yarn-autocompletions)
 
 # zsh-completions
 fpath=(/usr/local/share/zsh-completions $fpath)

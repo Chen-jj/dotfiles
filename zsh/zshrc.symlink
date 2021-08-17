@@ -6,7 +6,7 @@ source $DOTFILES/zsh/config.zsh
 source $DOTFILES/zsh/alias.zsh
 
 # adding path directory for custom scripts
-export PATH="$DOTFILES/bin:$PATH"
+# export PATH="$DOTFILES/bin:$PATH"
 
 # faster electron downloads
 export ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/

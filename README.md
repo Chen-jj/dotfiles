@@ -119,6 +119,7 @@ Also, you can tap C-r to reload tmux after editing ~/.tmux.conf.
 
 * [zsh-nvm](https://github.com/lukechilds/zsh-nvm): Zsh plugin for installing, updating and loading nvm.
 * [zsh-better-npm-completion](https://github.com/lukechilds/zsh-better-npm-completion): Better completion for npm.
+* [zsh-yarn-autocompletions](https://github.com/g-plane/zsh-yarn-autocompletions): Better completion for yarn.
 * [git](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins#git): Adds a lot of git aliases and functions.
 * [autojump](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins#autojump): Enables autojump if installed with homebrew.
 * [sublime](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins#sublime): Provides two commands, `st [file_name]` to open a specified file in Sublime Text and `stt`	to open the current directory in Sublime Text.
