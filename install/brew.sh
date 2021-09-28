@@ -24,4 +24,5 @@ brew install autojump
 brew install tmux
 brew install reattach-to-user-namespace
 brew install ccat
+brew install android-platform-tools
 # brew install antigen

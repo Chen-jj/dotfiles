@@ -68,6 +68,10 @@ set -g status-left-length 40
 ############
 # Plugins
 # Supports `github_username/repo` or full git repo URLs
+# tpm: https://github.com/tmux-plugins/tpm
+# plugins-list: https://github.com/tmux-plugins/list
+# tmux-plugins/tmux-copycat: for search. prefix + /
+# tmux-plugins/tmux-sidebar(https://github.com/tmux-plugins/tmux-sidebar/blob/master/docs/options.md): dir sidebar. prefix + tab
 ############
 set -g @tpm_plugins '              \
   tmux-plugins/tpm                 \
@@ -77,7 +81,23 @@ set -g @tpm_plugins '              \
   tmux-plugins/tmux-yank           \
   tmux-plugins/tmux-sidebar        \
   tmux-plugins/tmux-open           \
+  tmux-plugins/tmux-cpu            \
+  tmux-plugins/tmux-battery        \
+  xamut/tmux-weather               \
+  xamut/tmux-network-bandwidth      \
+  olimorris/tmux-pomodoro-plus     \
 '
+
+set -g @sidebar-tree-command 'tree -L 2 -C'
+set-option -g @tmux-weather-location "ShenZhen"
+set-option -g @tmux-weather-format "1"
+set-option -g @tmux-weather-interval 30
+set -g @pomodoro_mins 25
+set -g @pomodoro_break_mins 5
+set -g @pomodoro_on " #[fg=$text_red]🍅 "
+set -g @pomodoro_complete " #[fg=$text_green]🍅 "
+set -g @pomodoro_start 'j'
+set -g @pomodoro_cancel 'J'
 
 ############
 # Plugins Options
@@ -112,7 +132,7 @@ set -g status-interval 5
 # default statusbar colors
 # set-option -g status-bg colour0
 set-option -g status-fg $tm_color_active
-set-option -g status-bg default
+set-option -g status-bg colour236
 set-option -g status-attr default
 
 # default window title colors
@@ -143,9 +163,14 @@ set-window-option -g clock-mode-colour $tm_color_active
 tm_date="#[fg=$tm_color_inactive] %a %m/%d %H:%M"
 tm_host="#[fg=$tm_color_feature,bold]cjj"
 tm_session_name="#[fg=$tm_color_feature,bold]$tm_icon #S"
+tm_cpu="#[fg=$tm_color_inactive]CPU: #{cpu_percentage}"
+tm_weather="#[fg=$tm_color_inactive]#{weather}"
+tm_battery="#[fg=$tm_color_inactive]#{battery_status_bg} Batt: #{battery_percentage}"
+tm_net_speed="#[fg=$tm_color_inactive]#{network_bandwidth}"
+tm_pomodoro="#[fg=$tm_color_inactive]#{pomodoro_status}"
 
 set -g status-left $tm_session_name' '
-set -g status-right ' '$tm_date' '$tm_host
+set -g status-right $tm_pomodoro' '$tm_separator_left_bold' '$tm_date' | '$tm_weather' | '$tm_net_speed' | '$tm_battery' | '$tm_cpu' | '$tm_host
 
 
 # Initializes TMUX plugin manager.

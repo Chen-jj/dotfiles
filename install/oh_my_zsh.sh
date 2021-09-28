@@ -23,4 +23,5 @@ fi
 
 git clone https://github.com/lukechilds/zsh-nvm $ZSH_CUSTOM/plugins/zsh-nvm
 git clone https://github.com/lukechilds/zsh-better-npm-completion $ZSH_CUSTOM/plugins/zsh-better-npm-completion
+git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
 cp -R $DOTFILES/oh-my-zsh/plugins/yarn-autocompletions $ZSH_CUSTOM/plugins/yarn-autocompletions
