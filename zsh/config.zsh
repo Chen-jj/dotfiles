@@ -3,6 +3,7 @@ export ZSH=$HOME/.oh-my-zsh
 
 # Theme: Bullet Train
 # https://github.com/caiogondim/bullet-train-oh-my-zsh-theme
+zstyle ':omz:alpha:lib:git' async-prompt no #https://github.com/ohmyzsh/ohmyzsh/issues/12328
 ZSH_THEME="bullet-train"
 export BULLETTRAIN_NVM_SHOW=true
 
@@ -12,7 +13,7 @@ export BULLETTRAIN_NVM_SHOW=true
 # export NVM_LAZY_LOAD=true
 export NVM_AUTO_USE=true
 
-plugins=(zsh-nvm git autojump sublime history dirhistory zsh-better-npm-completion zsh-autosuggestions yarn-autocompletions)
+plugins=(zsh-nvm git autojump sublime history dirhistory zsh-better-npm-completion zsh-autosuggestions)
 
 # zsh-completions
 fpath=(/usr/local/share/zsh-completions $fpath)

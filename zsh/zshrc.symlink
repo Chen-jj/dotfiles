@@ -1,4 +1,14 @@
+unset MAILCHECK
+
 export DOTFILES=$HOME/dotfiles
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+# setup nvm
+export NVM_DIR="/Volumes/extender/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+export NVM_NO_INSTALL=1 # 禁用自动安装功能
 
 source $DOTFILES/zsh/config.zsh
 
@@ -13,6 +23,29 @@ export ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/
 
 source ~/.bash_profile
 
-# setup nvm
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+#Kerberos
+
+kinit chenjiajian.5
+
+# JDK
+# export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jbr/Contents/Home
+# export PATH=$JAVA_HOME/bin:$PATH
+# export JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.12/libexec/openjdk.jdk/Contents/Home
+export JAVA_HOME=/Users/bytedance/Library/Java/JavaVirtualMachines/azul-11.0.24/Contents/Home
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
+
+# OHOS
+export OHOS_HOME=/Users/bytedance/Library/OpenHarmony/sdk/20
+export OHOS_OHPM_HOME=/Applications/DevEco-Studio.app/Contents/tools/ohpm/bin
+export PATH=$OHOS_HOME/toolchains:$OHOS_OHPM_HOME:$PATH
+
+export SCRCPY_SERVER_PATH=/Applications/极空间.app/Contents/Resources/app.asar.unpacked/bin/platform-tools/scrcpy-server
+export PATH=$PATH:/Applications/极空间.app/Contents/Resources/app.asar.unpacked/bin/platform-tools
+
+#Extender HandDevices
+export PATH=/Volumes/extender/.npm-global/bin:$PATH
+
+# bunny env
+export PATH="$HOME/.bunny/current/bin:$PATH"
+alias buuny="bunny"

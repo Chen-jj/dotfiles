@@ -1,9 +1,11 @@
-# .tmux.conf
+# .tmux.conf  (fixed for tmux 3.x, mouse scroll & click work correctly)
 
 set -g default-command "reattach-to-user-namespace -l zsh"
 set -g default-terminal "screen-256color"
+set -ga terminal-overrides ",xterm-256color:Tc"
 
-set -g history-limit 5000
+# 放大历史缓冲,避免滚几下就翻穿
+set -g history-limit 100000
 
 ############
 # basic options
@@ -12,24 +14,33 @@ set -sg escape-time 1
 set -g base-index 1
 setw -g pane-base-index 1
 
-# Activity Monitoring
 setw -g monitor-activity off
 set -g visual-activity off
 
-# automatically renumber tmux windows
 set -g renumber-windows on
 set-option -g allow-rename off
 
+# ============ 鼠标配置（关键修复） ============
 set-option -g mouse on
-bind-key -T root WheelUpPane select-pane -t =\; copy-mode -e\; send-keys -M
+
+# 滚轮:不再用 -t = 和强制 select-pane,避免串屏和吞点击
+bind -n WheelUpPane   if-shell -Ft= '#{?pane_in_mode,1,#{alternate_on}}' \
+    'send-keys -M' 'copy-mode -e; send-keys -M'
+bind -n WheelDownPane if-shell -Ft= '#{?pane_in_mode,1,#{alternate_on}}' \
+    'send-keys -M' 'send-keys -M'
+
+# copy-mode 里滚轮顺滑(每次 3 行)
+bind -T copy-mode-vi WheelUpPane   send-keys -X -N 3 scroll-up
+bind -T copy-mode-vi WheelDownPane send-keys -X -N 3 scroll-down
+
+# 鼠标拖选复制到 macOS 剪贴板
+bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "reattach-to-user-namespace pbcopy"
+bind -T copy-mode-vi y                 send-keys -X copy-pipe-and-cancel "reattach-to-user-namespace pbcopy"
 
 set-option -g set-titles on
 set-option -g set-titles-string "#T - #W"
-
-# fixed alt + left/right
 set-window-option -g xterm-keys on
 
-# synchronize all panes in a window
 bind Y setw synchronize-panes
 
 ############
@@ -40,9 +51,9 @@ set -g prefix C-a
 bind C-a send-prefix
 
 unbind %
-bind h split-window -h # Split panes horizontal
+bind h split-window -h
 unbind '"'
-bind v split-window -v # Split panes vertically
+bind v split-window -v
 
 unbind ^J
 bind ^J select-pane -t :.+
@@ -56,22 +67,13 @@ bind r source-file ~/.tmux.conf \; display "Reloaded!"
 ############
 # STATUS BAR
 ############
-
-set -g status off
 set -g status on
-set -g status-interval 30
-
+set -g status-interval 5
 set -g status-position bottom
 set -g status-justify left
-set -g status-left-length 40
 
 ############
 # Plugins
-# Supports `github_username/repo` or full git repo URLs
-# tpm: https://github.com/tmux-plugins/tpm
-# plugins-list: https://github.com/tmux-plugins/list
-# tmux-plugins/tmux-copycat: for search. prefix + /
-# tmux-plugins/tmux-sidebar(https://github.com/tmux-plugins/tmux-sidebar/blob/master/docs/options.md): dir sidebar. prefix + tab
 ############
 set -g @tpm_plugins '              \
   tmux-plugins/tpm                 \
@@ -84,7 +86,6 @@ set -g @tpm_plugins '              \
   tmux-plugins/tmux-cpu            \
   tmux-plugins/tmux-battery        \
   xamut/tmux-weather               \
-  xamut/tmux-network-bandwidth      \
   olimorris/tmux-pomodoro-plus     \
 '
 
@@ -94,71 +95,52 @@ set-option -g @tmux-weather-format "1"
 set-option -g @tmux-weather-interval 30
 set -g @pomodoro_mins 25
 set -g @pomodoro_break_mins 5
-set -g @pomodoro_on " #[fg=$text_red]🍅 "
-set -g @pomodoro_complete " #[fg=$text_green]🍅 "
+set -g @pomodoro_on " #[fg=red]🍅 "
+set -g @pomodoro_complete " #[fg=green]🍅 "
 set -g @pomodoro_start 'j'
 set -g @pomodoro_cancel 'J'
 
-############
-# Plugins Options
-############
-# tmux-resurrect options
 set -g @resurrect-capture-pane-contents 'on'
 set -g @resurrect-processes 'gulp compass python node ssh psql mysql sqlite3 "mongod->mongod --dbpath ~/Dev/srv/mongodb" "grunt->grunt serve"'
+# 修 locale,让日期显示英文
+set-environment -g LC_ALL "en_US.UTF-8"
+set-environment -g LANG  "en_US.UTF-8"
 
 ####
-# COLOUR
-# https://github.com/nicknisi/dotfiles/blob/master/tmux/theme.sh
+# COLOUR  (tmux 3.x style - 必须用 *-style 代替旧的 *-fg/*-bg/*-attr)
 ####
-
 tm_icon="☀"
 tm_color_active=colour82
 tm_color_inactive=colour241
 tm_color_feature=colour10
-tm_color_music=colour10
 tm_active_border_color=colour10
 
-# separators
 tm_separator_left_bold="◀"
-tm_separator_left_thin="❮"
-tm_separator_right_bold="▶"
-tm_separator_right_thin="❯"
 
 set -g status-left-length 32
 set -g status-right-length 150
-set -g status-interval 5
 
+# statusbar (新语法)
+set -g status-style "fg=$tm_color_active,bg=colour236"
 
-# default statusbar colors
-# set-option -g status-bg colour0
-set-option -g status-fg $tm_color_active
-set-option -g status-bg colour236
-set-option -g status-attr default
-
-# default window title colors
-set-window-option -g window-status-fg $tm_color_inactive
-set-window-option -g window-status-bg default
-set -g window-status-format "#I #W"
-
-# active window title colors
-set-window-option -g window-status-current-fg $tm_color_active
-set-window-option -g window-status-current-bg default
-set-window-option -g  window-status-current-format "#[bold]#I #W"
+# window title
+setw -g window-status-style          "fg=$tm_color_inactive,bg=default"
+setw -g window-status-current-style  "fg=$tm_color_active,bg=default,bold"
+set  -g window-status-format         "#I #W"
+set  -g window-status-current-format "#I #W"
 
 # pane border
-set-option -g pane-border-fg $tm_color_inactive
-set-option -g pane-active-border-fg $tm_active_border_color
+set -g pane-border-style        "fg=$tm_color_inactive"
+set -g pane-active-border-style "fg=$tm_active_border_color"
 
-# message text
-set-option -g message-bg default
-set-option -g message-fg $tm_color_active
+# message
+set -g message-style "fg=$tm_color_active,bg=default"
 
 # pane number display
-set-option -g display-panes-active-colour $tm_color_active
-set-option -g display-panes-colour $tm_color_inactive
+set -g display-panes-active-colour $tm_color_active
+set -g display-panes-colour        $tm_color_inactive
 
-# clock
-set-window-option -g clock-mode-colour $tm_color_active
+setw -g clock-mode-colour $tm_color_active
 
 tm_date="#[fg=$tm_color_inactive] %a %m/%d %H:%M"
 tm_host="#[fg=$tm_color_feature,bold]cjj"
@@ -169,10 +151,8 @@ tm_battery="#[fg=$tm_color_inactive]#{battery_status_bg} Batt: #{battery_percent
 tm_net_speed="#[fg=$tm_color_inactive]#{network_bandwidth}"
 tm_pomodoro="#[fg=$tm_color_inactive]#{pomodoro_status}"
 
-set -g status-left $tm_session_name' '
-set -g status-right $tm_pomodoro' '$tm_separator_left_bold' '$tm_date' | '$tm_weather' | '$tm_net_speed' | '$tm_battery' | '$tm_cpu' | '$tm_host
+set -g status-left  "$tm_session_name "
+set -g status-right "$tm_pomodoro $tm_separator_left_bold $tm_date | $tm_weather | $tm_battery | $tm_cpu | $tm_host"
 
-
-# Initializes TMUX plugin manager.
-# Keep this line at the very bottom of tmux.conf.
+# Initializes TMUX plugin manager. Keep this at the very bottom.
 run-shell '~/.tmux/plugins/tpm/tpm'
