@@ -36,6 +36,9 @@ brew install autojump
 brew install tmux
 brew install reattach-to-user-namespace
 
+# Terminal apps
+brew install --cask ghostty
+
 # Optional: install fzf key bindings
 $(brew --prefix)/opt/fzf/install --key-bindings --completion --no-update-rc 2>/dev/null || true
 

@@ -40,6 +40,13 @@ cd ~/dotfiles
 - **tmux** with [TPM](https://github.com/tmux-plugins/tpm)
 - **git** with useful aliases
 - **autojump** for quick directory navigation
+- **Ghostty** as the default modern terminal emulator
+
+### Ghostty
+
+- Installed automatically via Homebrew cask
+- Configured through `ghostty/config.ghostty`
+- Includes theme, macOS behavior, quick terminal, tabs/splits, notifications, and shell integration defaults
 
 ### Zsh Plugins
 
@@ -77,6 +84,7 @@ The installer configures various macOS system preferences:
 | `gitconfig.symlink` | `~/.gitconfig` |
 | `tmux.conf.symlink` | `~/.tmux.conf` |
 | `zshrc.symlink` | `~/.zshrc` |
+| `ghostty/config.ghostty` | `~/.config/ghostty/config.ghostty` |
 
 ## Customization
 
@@ -102,6 +110,7 @@ Remember to update your name and email in `git/gitconfig.symlink` before running
 2. **Install Tmux plugins**: Open tmux and press `Ctrl+a` then `I` (capital i)
 3. **Install fzf key bindings**: Already done during brew installation
 4. **Use dirhistory**: Press `Alt+Left` and `Alt+Right` to go backward and forward through directory history
+5. **Launch Ghostty**: It will read `~/.config/ghostty/config.ghostty`
 
 ## Aliases
 
