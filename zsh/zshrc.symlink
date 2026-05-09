@@ -4,48 +4,90 @@ export DOTFILES=$HOME/dotfiles
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-# setup nvm
-export NVM_DIR="/Volumes/extender/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-export NVM_NO_INSTALL=1 # 禁用自动安装功能
+# =============================================================================
+# NVM Configuration
+# =============================================================================
+# Use default NVM directory or set custom location
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
+load_nvm() {
+    command -v nvm >/dev/null 2>&1 && return
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+}
+
+auto_use_nvm() {
+    load_nvm
+
+    command -v nvm >/dev/null 2>&1 || return
+
+    local nvmrc_path
+    nvmrc_path="$(nvm_find_nvmrc 2>/dev/null)"
+
+    if [ -n "$nvmrc_path" ]; then
+        nvm use --silent >/dev/null 2>&1
+    else
+        local default_version
+        default_version="$(nvm version default 2>/dev/null)"
+        if [ -n "$default_version" ] && [ "$default_version" != "N/A" ] && [ "$(nvm current 2>/dev/null)" != "$default_version" ]; then
+            nvm use default --silent >/dev/null 2>&1
+        fi
+    fi
+}
+
+autoload -U add-zsh-hook
+add-zsh-hook chpwd auto_use_nvm
+auto_use_nvm
+
+# =============================================================================
+# Load dotfiles configurations
+# =============================================================================
 source $DOTFILES/zsh/config.zsh
-
-# alias
 source $DOTFILES/zsh/alias.zsh
 
-# adding path directory for custom scripts
-# export PATH="$DOTFILES/bin:$PATH"
+# =============================================================================
+# PATH Configuration
+# =============================================================================
+# Custom scripts
+export PATH="$DOTFILES/bin:$PATH"
 
-# faster electron downloads
-export ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/
+# Homebrew (Apple Silicon)
+if [[ -d /opt/homebrew/bin ]]; then
+    export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+fi
 
-source ~/.bash_profile
+# Local bin
+export PATH="$HOME/.local/bin:$PATH"
 
-#Kerberos
+# =============================================================================
+# Development Tools
+# =============================================================================
+# fzf integration
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-kinit chenjiajian.5
+# AutoJump
+[ -f /opt/homebrew/etc/profile.d/autojump.sh ] && source /opt/homebrew/etc/profile.d/autojump.sh
+[ -f /usr/local/etc/profile.d/autojump.sh ] && source /usr/local/etc/profile.d/autojump.sh
 
-# JDK
-# export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jbr/Contents/Home
-# export PATH=$JAVA_HOME/bin:$PATH
-# export JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.12/libexec/openjdk.jdk/Contents/Home
-export JAVA_HOME=/Users/bytedance/Library/Java/JavaVirtualMachines/azul-11.0.24/Contents/Home
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
+# =============================================================================
+# User Customizations (~/.bash_profile for machine-specific settings)
+# =============================================================================
+[ -f ~/.bash_profile ] && source ~/.bash_profile
 
-# OHOS
-export OHOS_HOME=/Users/bytedance/Library/OpenHarmony/sdk/20
-export OHOS_OHPM_HOME=/Applications/DevEco-Studio.app/Contents/tools/ohpm/bin
-export PATH=$OHOS_HOME/toolchains:$OHOS_OHPM_HOME:$PATH
+# =============================================================================
+# Optional: Company/Project Specific Settings
+# Uncomment and modify as needed for different machines
+# =============================================================================
 
-export SCRCPY_SERVER_PATH=/Applications/极空间.app/Contents/Resources/app.asar.unpacked/bin/platform-tools/scrcpy-server
-export PATH=$PATH:/Applications/极空间.app/Contents/Resources/app.asar.unpacked/bin/platform-tools
+# JDK Configuration (choose one based on your setup)
+# export JAVA_HOME=/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home
+# export PATH="$JAVA_HOME/bin:$PATH"
 
-#Extender HandDevices
-export PATH=/Volumes/extender/.npm-global/bin:$PATH
+# Android SDK
+# export ANDROID_HOME=$HOME/Library/Android/sdk
+# export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
-# bunny env
-export PATH="$HOME/.bunny/current/bin:$PATH"
-alias buuny="bunny"
+# =============================================================================
+# Welcome Message
+# =============================================================================
+echo "Welcome! 🚀"

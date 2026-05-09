@@ -1,150 +1,127 @@
-Dotfiles
----
-This dotfiles is fork from [chuyik/dotfiles](https://github.com/chuyik/dotfiles) and with some of my customization.
+# Dotfiles
+
+Personal macOS dotfiles for quick development environment setup.
 
 ![dotfiles](https://cloud.githubusercontent.com/assets/6262943/19597521/ba234cca-97c7-11e6-9f9f-473f103e1f6f.jpeg)
 
-## Setup
+## Quick Start
 
 ```bash
-# Install required Xcode Command Line Tools
+# 1. Install Xcode Command Line Tools
 xcode-select --install
 
-# Clone this repo to your personal dir
+# 2. Clone this repo
 git clone git@github.com:Chen-jj/dotfiles.git ~/dotfiles
+cd ~/dotfiles
 
-# Better checkout install.sh and customize it before start
-# Run install.sh
-./dotfiles/install.sh
+# 3. Review and customize if needed
+# - Edit git/gitconfig.symlink with your name/email
+# - Edit zsh/zshrc.symlink for any custom paths
+
+# 4. Run the installer
+./install.sh
 ```
 
-## Brewing
+## What's Included
 
-### Install homebrew packages
+### Modern CLI Tools
 
-* ack
-* tree
-* wget
-* nginx
-* zsh
-* zsh-completions
-* git
-* git-lfs
-* autojump
-* tmux
-* reattach-to-user-namespace
-* ccat
+| Tool | Description |
+|------|-------------|
+| [bat](https://github.com/sharkdp/bat) | Modern `cat` with syntax highlighting |
+| [eza](https://github.com/eza-community/eza) | Modern `ls` replacement |
+| [fd](https://github.com/sharkdp/fd) | Fast `find` alternative |
+| [ripgrep](https://github.com/BurntSushi/ripgrep) | Fast `grep` alternative |
+| [fzf](https://github.com/junegunn/fzf) | Fuzzy finder |
 
-## OSX Configuration
+### Development Tools
 
-### finder
+- **zsh** with [Oh My Zsh](https://ohmyz.sh/)
+- **tmux** with [TPM](https://github.com/tmux-plugins/tpm)
+- **git** with useful aliases
+- **autojump** for quick directory navigation
 
-* Show all filename extensions
-* Show hidden files by default
-* Show the ~/Library folder in Finder
-* Disable window animations and Get Info animations
-* Allow text selection in Quick Look
-* When performing a search, search the current folder by default
-* Disable the warning when changing a file extension
-* Avoid creating .DS_Store files on network volumes
-* Enable subpixel font rendering on non-Apple LCDs
-* Show Path bar in Finder
+### Zsh Plugins
 
-### Safari & WebKit
+- `dirhistory` (Oh My Zsh built-in) - Navigate directory history with keyboard shortcuts
+- [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) - Fish-like suggestions
+- [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) - Syntax highlighting
 
-* Enable Safari’s debug menu
+### Node.js Toolchain
 
-### OS
+- Automatically installs the latest `nvm`
+- Automatically installs the latest stable `Node.js`
+- Automatically installs the latest stable `Yarn`
 
-* Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
-* Enable tap to click (Trackpad)
-* Disable Dashboard
-* Don’t show Dashboard as a Space
-* Disable auto correction
-* Disable smart quotes
-* Disable smart dashes
-* For TextEdit
-* For Notes
-* Kill affected applications
+### Theme
 
-## Symlinks
+[Spaceship](https://github.com/spaceship-prompt/spaceship-prompt) - Minimalistic, customizable Zsh prompt theme
 
-* ~/.gemrc
-* ~/.gitconfig
-* ~/.tmux.conf
-* ~/.zshrc
+## macOS Configuration
 
-### .gemrc
+The installer configures various macOS system preferences:
 
-* Only using the sources of **ruby-china**.
-* Enable **verbose mode** which can help us check the progress of installation while gem installing package.
-* **Remove the ri and rdoc** when installing new gems to speed up the gem installations and have less clutter in the system.
+- Show all filename extensions
+- Show hidden files in Finder (toggle with Cmd+Shift+.)
+- Show Path bar in Finder
+- Disable auto-correct, smart quotes, smart dashes
+- Enable tap to click
+- Enable Safari debug menu
+- And more...
 
-### .gitconfig
+## Symlinks Created
 
-<mark>Waring</mark>: you should check and modify the user name and email.
+| Source | Target |
+|--------|--------|
+| `gemrc.symlink` | `~/.gemrc` |
+| `gitconfig.symlink` | `~/.gitconfig` |
+| `tmux.conf.symlink` | `~/.tmux.conf` |
+| `zshrc.symlink` | `~/.zshrc` |
 
-* Setup the global Git hooks for [Git LFS](https://github.com/git-lfs/git-lfs).
-* Alias:
-   
-   ls
-   
-   ```bash
-   git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an%Creset' --abbrev-commit --date=relative --name-status
-   ```
-   
-   lt
-   
-   ```bash
-	git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an%Creset' --abbrev-commit --date=relative
-   ```
+## Customization
 
-* set **osxkeychain model** of credential to remember the user and pwd for https connection.
-* color the git ui
-* pull with rebase
+### Machine-Specific Settings
 
-### .tumx.conf
+Add your personal configurations to `~/.bash_profile`:
 
-You can binding your favor prefix key which value is C-a as default here.
+```bash
+# Example: Custom Java version
+export JAVA_HOME=/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home
 
-Also, you can tap C-r to reload tmux after editing ~/.tmux.conf.
+# Example: Company VPN/proxy settings
+export HTTP_PROXY=http://proxy.company.com:8080
+```
 
-### .zshrc
+### Git Configuration
 
-#### Themes
+Remember to update your name and email in `git/gitconfig.symlink` before running the installer.
 
-[Bullet Train](https://github.com/caiogondim/bullet-train-oh-my-zsh-theme)
+## Post-Installation
 
-#### Plugins
+1. **Restart your terminal** or run `source ~/.zshrc`
+2. **Install Tmux plugins**: Open tmux and press `Ctrl+a` then `I` (capital i)
+3. **Install fzf key bindings**: Already done during brew installation
+4. **Use dirhistory**: Press `Alt+Left` and `Alt+Right` to go backward and forward through directory history
 
-* [zsh-nvm](https://github.com/lukechilds/zsh-nvm): Zsh plugin for installing, updating and loading nvm.
-* [zsh-better-npm-completion](https://github.com/lukechilds/zsh-better-npm-completion): Better completion for npm.
-* [zsh-yarn-autocompletions](https://github.com/g-plane/zsh-yarn-autocompletions): Better completion for yarn.
-* [git](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins#git): Adds a lot of git aliases and functions.
-* [autojump](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins#autojump): Enables autojump if installed with homebrew.
-* [sublime](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins#sublime): Provides two commands, `st [file_name]` to open a specified file in Sublime Text and `stt`	to open the current directory in Sublime Text.
-* [history](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins#history): Provides some aliases for using the `history` command.
-* [dirhistory](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins#dirhistory): Allows us to navigate the history of previous current-working-directories using ALT-LEFT and ALT-RIGHT.
+## Aliases
 
-#### Aliases
+### General
+- `cat` → `bat` (syntax highlighting)
+- `ls` → `eza` (modern listing)
+- `ll` → detailed listing
+- `..` → `cd ..`
 
-* cls`clear`
-* ofd: `open .`
-* zshrc: `st ~/.zshrc`
-* tmrc: `st ~/.tmux.conf`
-* hosts: `st /etc/hosts`
-* quickp: `git add . & git commit -m 'quick commit' & git push`
-* ta: `tmux attach`
-* tls: `tmux ls`
-* tat: `tmux attach -t`
-* tns: `tmux new-session -s`
+### Tmux
+- `ta` → attach to last session
+- `tat <name>` → attach to named session
+- `tns <name>` → new session
+- `tls` → list sessions
 
-## Others
+### Git
+- `quickp` → add, commit "quick commit", and push
+- `git ls` → pretty log with file status
+- `git lt` → pretty log (tree only)
 
-### iTerm2
+## Credits
 
-Color scheme: [Oceanic Dark](https://github.com/mhartington/oceanic-next-iterm)
-
-### bin
-
-* tm: Helping to attach tmux session or create a new named tmux session.
+Forked from [chuyik/dotfiles](https://github.com/chuyik/dotfiles) with modern updates.
