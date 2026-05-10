@@ -51,12 +51,51 @@ load_nvm() {
     export NVM_LOADED=1
 }
 
+prepend_nvm_default_bin_to_path() {
+    local default_alias_path resolved_alias resolved_version default_bin
+
+    default_alias_path="$NVM_DIR/alias/default"
+    [ -f "$default_alias_path" ] || return
+
+    resolved_alias="$(tr -d '[:space:]' <"$default_alias_path")"
+    case "$resolved_alias" in
+        node)
+            resolved_version="$(ls -1 "$NVM_DIR/versions/node" 2>/dev/null | sort -V | tail -n 1)"
+            [ -n "$resolved_version" ] || return
+            ;;
+        lts/*)
+            resolved_version="$(tr -d '[:space:]' <"$NVM_DIR/alias/$resolved_alias" 2>/dev/null)"
+            [ -n "$resolved_version" ] || return
+            ;;
+        v*)
+            resolved_version="$resolved_alias"
+            ;;
+        *)
+            return
+            ;;
+    esac
+
+    default_bin="$NVM_DIR/versions/node/$resolved_version/bin"
+    [ -d "$default_bin" ] || return
+
+    case ":$PATH:" in
+        *":$default_bin:"*) ;;
+        *) export PATH="$default_bin:$PATH" ;;
+    esac
+}
+
 lazy_load_nvm_and_run() {
     local cmd="$1"
     shift
 
-    unset -f nvm node npm npx yarn pnpm corepack 2>/dev/null
+    unset -f "$cmd" nvm node npm npx yarn pnpm corepack 2>/dev/null
     load_nvm || return 1
+
+    # In projects with .nvmrc, switch to the requested version on demand.
+    if [ -n "$(find_nvmrc 2>/dev/null)" ]; then
+        nvm use --silent >/dev/null 2>&1
+    fi
+
     "$cmd" "$@"
 }
 
@@ -74,13 +113,15 @@ auto_use_nvm() {
 
     if [ -n "$nvmrc_path" ]; then
         load_nvm
-        command -v nvm >/dev/null 2>&1 || return
         nvm use --silent >/dev/null 2>&1
     fi
 }
 
 autoload -U add-zsh-hook
 add-zsh-hook chpwd auto_use_nvm
+
+# Keep npm global CLIs available without eagerly loading nvm.
+prepend_nvm_default_bin_to_path
 
 # =============================================================================
 # Load dotfiles configurations
@@ -126,3 +167,7 @@ export OHPM_HOME=/Applications/DevEco-Studio.app/Contents/tools/ohpm
 export PATH=${OHPM_HOME}/bin:${PATH}
 
 auto_use_nvm
+
+# bunny env
+export PATH="$HOME/.bunny/current/bin:$PATH"
+alias buuny="bunny"
