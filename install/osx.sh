@@ -44,7 +44,10 @@ defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 ###############################################################################
 
 # Enable tap to click for this user and for the login screen
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
 # Trackpad: map bottom right corner to right-click
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -int 2
@@ -95,13 +98,6 @@ set_symbolic_hotkey() {
 
 defaults read com.apple.symbolichotkeys AppleSymbolicHotKeys >/dev/null 2>&1 || \
     defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict
-
-# Switch input source with Cmd+Space
-set_symbolic_hotkey 60 true 32 49 262144
-
-# Show Spotlight with Ctrl+Space
-set_symbolic_hotkey 64 true 32 49 1048576
-set_symbolic_hotkey 65 false "" "" ""
 
 ###############################################################################
 # Finder                                                                      #
@@ -168,12 +164,12 @@ defaults write com.apple.dock expose-animation-duration -float 0.1
 ###############################################################################
 
 # Enable Safari's debug menu
-defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
+defaults write com.apple.Safari IncludeInternalDebugMenu -bool true || true
 
 # Enable the Develop menu and the Web Inspector
-defaults write com.apple.Safari IncludeDevelopMenu -bool true
-defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
-defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
+defaults write com.apple.Safari IncludeDevelopMenu -bool true || true
+defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true || true
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true || true
 
 ###############################################################################
 # TextEdit                                                                    #
@@ -203,6 +199,7 @@ defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 
 echo "Restarting affected applications..."
 
+killall cfprefsd &>/dev/null || true
 for app in "Dock" "Finder" "Safari" "SystemUIServer"; do
     killall "$app" &>/dev/null || true
 done

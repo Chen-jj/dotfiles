@@ -4,10 +4,32 @@
 
 # Path to Oh My Zsh
 export ZSH=$HOME/.oh-my-zsh
+export ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump"
+ZSH_DISABLE_COMPFIX=true
+DISABLE_AUTO_UPDATE=true
 
 # Theme: Spaceship
 # https://github.com/spaceship-prompt/spaceship-prompt
+SPACESHIP_PROMPT_ASYNC=true
 ZSH_THEME="spaceship"
+
+# Reduce per-command prompt work to avoid post-command input lag.
+SPACESHIP_PROMPT_ORDER=(
+    time
+    user
+    dir
+    host
+    git
+    node
+    exec_time
+    line_sep
+    jobs
+    exit_code
+    char
+)
+
+# Git prompt optimization in large repos.
+DISABLE_UNTRACKED_FILES_DIRTY=true
 
 # =============================================================================
 # Plugins
@@ -21,8 +43,6 @@ ZSH_THEME="spaceship"
 
 plugins=(
     git
-    autojump
-    history
     dirhistory
     zsh-autosuggestions
     zsh-syntax-highlighting
@@ -31,31 +51,12 @@ plugins=(
 # =============================================================================
 # Completion
 # =============================================================================
-# Add Homebrew zsh-completions to fpath
+# Add Homebrew zsh-completions to fpath before Oh My Zsh initializes compinit.
 if [[ -d /opt/homebrew/share/zsh-completions ]]; then
     fpath=(/opt/homebrew/share/zsh-completions $fpath)
 fi
 if [[ -d /usr/local/share/zsh-completions ]]; then
     fpath=(/usr/local/share/zsh-completions $fpath)
-fi
-
-# Fix common Homebrew permission issues that trigger compinit prompts.
-fix_compinit_permissions() {
-    local dir
-    for dir in /opt/homebrew/share /usr/local/share; do
-        if [[ -d "$dir" && -O "$dir" ]]; then
-            chmod go-w "$dir" 2>/dev/null || true
-        fi
-    done
-}
-
-# Initialize completions without interactive prompts.
-autoload -Uz compinit compaudit
-fix_compinit_permissions
-if [[ -n "$(compaudit 2>/dev/null)" ]]; then
-    compinit -i
-else
-    compinit
 fi
 
 # =============================================================================

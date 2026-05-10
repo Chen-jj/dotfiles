@@ -90,7 +90,7 @@ The installer configures various macOS system preferences:
 
 ### Machine-Specific Settings
 
-Add your personal configurations to `~/.bash_profile`:
+Add your personal configurations to `~/.zsh.local`:
 
 ```bash
 # Example: Custom Java version

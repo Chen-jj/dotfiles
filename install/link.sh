@@ -24,10 +24,9 @@ create_link() {
                 echo "~${target_file#$HOME} already exists as a link... Skipping."
             fi
         else
-            echo "~${target_file#$HOME} already exists as a file... Creating backup."
-            mv "$target_file" "$target_file.bak.$(date +%Y%m%d%H%M%S)"
-            ln -s "$source_file" "$target_file"
-            echo "Created symlink: $target_file -> $source_file"
+            echo "~${target_file#$HOME} already exists as a file... Skipping to avoid overwriting it."
+            echo "Please back it up manually and rerun if you want this symlink:"
+            echo "  $target_file -> $source_file"
         fi
     else
         echo "Creating symlink: $target_file -> $source_file"

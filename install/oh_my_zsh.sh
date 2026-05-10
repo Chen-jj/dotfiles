@@ -3,12 +3,16 @@
 set -e
 
 DOTFILES=$HOME/dotfiles
+OH_MY_ZSH_DIR="$HOME/.oh-my-zsh"
 ZSH_CUSTOM=$HOME/.oh-my-zsh/custom
 
-# Install Oh My Zsh if not present
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
+# Install Oh My Zsh core files without running the upstream installer,
+# because this repo manages ~/.zshrc itself via symlink.
+if [ ! -d "$OH_MY_ZSH_DIR" ]; then
     echo -e "\nInstalling Oh My Zsh..."
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git "$OH_MY_ZSH_DIR"
+else
+    echo "Oh My Zsh already installed, skipping core clone."
 fi
 
 # Create custom directories

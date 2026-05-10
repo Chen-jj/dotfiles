@@ -6,6 +6,53 @@ set -e
 # Usage: ./install.sh
 
 DOTFILES=$HOME/dotfiles
+INSTALL_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles"
+INSTALL_STATE_FILE="$INSTALL_STATE_DIR/install.completed"
+
+mkdir -p "$INSTALL_STATE_DIR"
+
+mark_step_completed() {
+    local step_key="$1"
+
+    touch "$INSTALL_STATE_FILE"
+    if ! grep -Fxq "$step_key" "$INSTALL_STATE_FILE"; then
+        echo "$step_key" >>"$INSTALL_STATE_FILE"
+    fi
+}
+
+is_step_completed() {
+    local step_key="$1"
+
+    [ -f "$INSTALL_STATE_FILE" ] && grep -Fxq "$step_key" "$INSTALL_STATE_FILE"
+}
+
+run_script_step() {
+    local step_label="$1"
+    local step_key="$2"
+    local description="$3"
+    local script_path="$4"
+
+    echo -e "\n$step_label: $description"
+    if is_step_completed "$step_key"; then
+        echo "Already completed, skipping."
+        return
+    fi
+
+    source "$script_path"
+    mark_step_completed "$step_key"
+}
+
+ensure_profile_file() {
+    local profile
+
+    for profile in "$HOME/.zshrc" "$HOME/.bash_profile" "$HOME/.zprofile" "$HOME/.profile" "$HOME/.bashrc"; do
+        if [ -e "$profile" ]; then
+            return
+        fi
+    done
+
+    touch "$HOME/.bash_profile"
+}
 
 echo "========================================"
 echo "  Dotfiles Installation"
@@ -19,37 +66,38 @@ fi
 
 echo -e "\n📱 Detected: macOS"
 
+# Ensure a shell profile exists before installers that expect one.
+ensure_profile_file
+
 # Step 1: Homebrew
-echo -e "\n🍺 Step 1/7: Installing Homebrew packages..."
-source "$DOTFILES/install/brew.sh"
+run_script_step "🍺 Step 1/7" "brew" "Installing Homebrew packages..." "$DOTFILES/install/brew.sh"
 
 # Step 2: Node.js toolchain
-echo -e "\n🟢 Step 2/7: Installing nvm, Node.js, and Yarn..."
-source "$DOTFILES/install/nodejs.sh"
+run_script_step "🟢 Step 2/7" "nodejs" "Installing nvm, Node.js, and Yarn..." "$DOTFILES/install/nodejs.sh"
 
 # Step 3: macOS System Preferences
-echo -e "\n⚙️  Step 3/7: Configuring macOS system preferences..."
-source "$DOTFILES/install/osx.sh"
+run_script_step "⚙️  Step 3/7" "osx" "Configuring macOS system preferences..." "$DOTFILES/install/osx.sh"
 
 # Step 4: Oh My Zsh
-echo -e "\n🐚 Step 4/7: Setting up Oh My Zsh..."
-source "$DOTFILES/install/oh_my_zsh.sh"
+run_script_step "🐚 Step 4/7" "oh_my_zsh" "Setting up Oh My Zsh..." "$DOTFILES/install/oh_my_zsh.sh"
 
 # Step 5: Tmux Plugin Manager
-echo -e "\n📺 Step 5/7: Installing Tmux Plugin Manager..."
-source "$DOTFILES/install/tpm.sh"
+run_script_step "📺 Step 5/7" "tpm" "Installing Tmux Plugin Manager..." "$DOTFILES/install/tpm.sh"
 
 # Step 6: Create Symlinks
-echo -e "\n🔗 Step 6/7: Creating symlinks..."
-source "$DOTFILES/install/link.sh"
+run_script_step "🔗 Step 6/7" "links" "Creating symlinks..." "$DOTFILES/install/link.sh"
 
 # Step 7: Set default shell
 echo -e "\n🔧 Step 7/7: Configuring default shell..."
-if [[ "$SHELL" != *"zsh"* ]]; then
+if is_step_completed "default_shell"; then
+    echo "Already completed, skipping."
+elif [[ "$SHELL" != *"zsh"* ]]; then
     echo "Changing default shell to zsh..."
     chsh -s "$(which zsh)" || echo "Warning: Could not change default shell. Please run: chsh -s $(which zsh)"
+    mark_step_completed "default_shell"
 else
     echo "zsh is already the default shell."
+    mark_step_completed "default_shell"
 fi
 
 # Create ~/.bash_profile if not found (for compatibility)

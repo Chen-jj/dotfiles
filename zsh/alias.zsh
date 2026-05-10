@@ -17,7 +17,8 @@ if command -v eza &>/dev/null; then
     alias ll="eza -l"
     alias la="eza -la"
     alias lt="eza --tree"
-    alias l="eza -lbF --git"
+    alias l="eza -lbF"
+    alias lg="eza -lbF --git"
 else
     alias ll="ls -la"
     alias la="ls -la"
@@ -48,6 +49,12 @@ alias quickp="git add . && git commit -m 'quick commit' && git push"
 # Ensure git uses UTF-8
 alias git='LANG=en_US.UTF-8 git'
 
+# History shortcuts
+alias h="history"
+alias hl="history | less"
+alias hs="history | grep"
+alias hsi="history | grep -i"
+
 # =============================================================================
 # Tmux Aliases
 # =============================================================================
@@ -68,5 +75,6 @@ alias -- -="cd -"
 # =============================================================================
 # Development
 # =============================================================================
+alias code="trae-cn"
 alias serve="python3 -m http.server"
 alias ports="lsof -i -P | grep LISTEN"

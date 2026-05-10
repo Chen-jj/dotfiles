@@ -10,3 +10,8 @@
 	ui = true
 [pull]
 	rebase = true
+[maintenance]
+	repo = /Users/bytedance/Codebase/Toutiao
+[trace2]
+	normalTarget = /Users/bytedance/.gitlog/log
+	normalbrief = true

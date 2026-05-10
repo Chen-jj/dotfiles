@@ -5,47 +5,6 @@ export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
 # =============================================================================
-# NVM Configuration
-# =============================================================================
-# Use default NVM directory or set custom location
-export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
-
-load_nvm() {
-    command -v nvm >/dev/null 2>&1 && return
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-}
-
-auto_use_nvm() {
-    load_nvm
-
-    command -v nvm >/dev/null 2>&1 || return
-
-    local nvmrc_path
-    nvmrc_path="$(nvm_find_nvmrc 2>/dev/null)"
-
-    if [ -n "$nvmrc_path" ]; then
-        nvm use --silent >/dev/null 2>&1
-    else
-        local default_version
-        default_version="$(nvm version default 2>/dev/null)"
-        if [ -n "$default_version" ] && [ "$default_version" != "N/A" ] && [ "$(nvm current 2>/dev/null)" != "$default_version" ]; then
-            nvm use default --silent >/dev/null 2>&1
-        fi
-    fi
-}
-
-autoload -U add-zsh-hook
-add-zsh-hook chpwd auto_use_nvm
-auto_use_nvm
-
-# =============================================================================
-# Load dotfiles configurations
-# =============================================================================
-source $DOTFILES/zsh/config.zsh
-source $DOTFILES/zsh/alias.zsh
-
-# =============================================================================
 # PATH Configuration
 # =============================================================================
 # Custom scripts
@@ -60,6 +19,76 @@ fi
 export PATH="$HOME/.local/bin:$PATH"
 
 # =============================================================================
+# NVM Configuration
+# =============================================================================
+# Use default NVM directory or set custom location
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+export NVM_LOADED=0
+
+find_nvmrc() {
+    local dir="$PWD"
+
+    while [[ "$dir" != "/" ]]; do
+        if [[ -f "$dir/.nvmrc" ]]; then
+            echo "$dir/.nvmrc"
+            return 0
+        fi
+        dir="${dir:h}"
+    done
+
+    if [[ -f "/.nvmrc" ]]; then
+        echo "/.nvmrc"
+        return 0
+    fi
+
+    return 1
+}
+
+load_nvm() {
+    command -v nvm >/dev/null 2>&1 && return
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+    export NVM_LOADED=1
+}
+
+lazy_load_nvm_and_run() {
+    local cmd="$1"
+    shift
+
+    unset -f nvm node npm npx yarn pnpm corepack 2>/dev/null
+    load_nvm || return 1
+    "$cmd" "$@"
+}
+
+nvm() { lazy_load_nvm_and_run nvm "$@"; }
+node() { lazy_load_nvm_and_run node "$@"; }
+npm() { lazy_load_nvm_and_run npm "$@"; }
+npx() { lazy_load_nvm_and_run npx "$@"; }
+yarn() { lazy_load_nvm_and_run yarn "$@"; }
+pnpm() { lazy_load_nvm_and_run pnpm "$@"; }
+corepack() { lazy_load_nvm_and_run corepack "$@"; }
+
+auto_use_nvm() {
+    local nvmrc_path
+    nvmrc_path="$(find_nvmrc 2>/dev/null)"
+
+    if [ -n "$nvmrc_path" ]; then
+        load_nvm
+        command -v nvm >/dev/null 2>&1 || return
+        nvm use --silent >/dev/null 2>&1
+    fi
+}
+
+autoload -U add-zsh-hook
+add-zsh-hook chpwd auto_use_nvm
+
+# =============================================================================
+# Load dotfiles configurations
+# =============================================================================
+source $DOTFILES/zsh/config.zsh
+source $DOTFILES/zsh/alias.zsh
+
+# =============================================================================
 # Development Tools
 # =============================================================================
 # fzf integration
@@ -70,9 +99,9 @@ export PATH="$HOME/.local/bin:$PATH"
 [ -f /usr/local/etc/profile.d/autojump.sh ] && source /usr/local/etc/profile.d/autojump.sh
 
 # =============================================================================
-# User Customizations (~/.bash_profile for machine-specific settings)
+# User Customizations (~/.zsh.local for machine-specific settings)
 # =============================================================================
-[ -f ~/.bash_profile ] && source ~/.bash_profile
+[ -f ~/.zsh.local ] && source ~/.zsh.local
 
 # =============================================================================
 # Optional: Company/Project Specific Settings
@@ -84,10 +113,16 @@ export PATH="$HOME/.local/bin:$PATH"
 # export PATH="$JAVA_HOME/bin:$PATH"
 
 # Android SDK
-# export ANDROID_HOME=$HOME/Library/Android/sdk
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/platform-tools
 # export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
-# =============================================================================
-# Welcome Message
-# =============================================================================
-echo "Welcome! 🚀"
+# OHOS SDK
+export PATH=$PATH:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/toolchains
+HDC_SERVER_PORT=7035
+launchctl setenv HDC_SERVER_PORT $HDC_SERVER_PORT
+export HDC_SERVER_PORT
+export OHPM_HOME=/Applications/DevEco-Studio.app/Contents/tools/ohpm
+export PATH=${OHPM_HOME}/bin:${PATH}
+
+auto_use_nvm

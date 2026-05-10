@@ -6,8 +6,9 @@
 # Theme & Font
 # =============================================================================
 
-# Use a popular built-in theme pair that follows macOS light/dark mode.
-theme = light:Catppuccin Latte,dark:Catppuccin Mocha
+# Use a fixed dark theme by default.
+#theme = light:Catppuccin Latte,dark:Catppuccin Mocha
+theme = Catppuccin Mocha
 
 # Use a common Nerd Font if installed; Ghostty will fall back automatically.
 # Uncomment if you have the font installed and want to force it:
@@ -25,8 +26,8 @@ window-theme = auto
 macos-titlebar-style = tabs
 macos-titlebar-proxy-icon = hidden
 
-# Slight transparency without going too far.
-background-opacity = 0.96
+# Increase transparency a bit more while keeping readability.
+background-opacity = 0.90
 background-blur-radius = 18
 
 # Treat only the left Option key as Alt so terminal shortcuts work while
