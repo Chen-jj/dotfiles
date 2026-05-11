@@ -70,25 +70,28 @@ echo -e "\n📱 Detected: macOS"
 ensure_profile_file
 
 # Step 1: Homebrew
-run_script_step "🍺 Step 1/7" "brew" "Installing Homebrew packages..." "$DOTFILES/install/brew.sh"
+run_script_step "🍺 Step 1/8" "brew" "Installing Homebrew packages..." "$DOTFILES/install/brew.sh"
 
 # Step 2: Node.js toolchain
-run_script_step "🟢 Step 2/7" "nodejs" "Installing nvm, Node.js, and Yarn..." "$DOTFILES/install/nodejs.sh"
+run_script_step "🟢 Step 2/8" "nodejs" "Installing nvm, Node.js, and Yarn..." "$DOTFILES/install/nodejs.sh"
 
 # Step 3: macOS System Preferences
-run_script_step "⚙️  Step 3/7" "osx" "Configuring macOS system preferences..." "$DOTFILES/install/osx.sh"
+run_script_step "⚙️  Step 3/8" "osx" "Configuring macOS system preferences..." "$DOTFILES/install/osx.sh"
 
 # Step 4: Oh My Zsh
-run_script_step "🐚 Step 4/7" "oh_my_zsh" "Setting up Oh My Zsh..." "$DOTFILES/install/oh_my_zsh.sh"
+run_script_step "🐚 Step 4/8" "oh_my_zsh" "Setting up Oh My Zsh..." "$DOTFILES/install/oh_my_zsh.sh"
 
 # Step 5: Tmux Plugin Manager
-run_script_step "📺 Step 5/7" "tpm" "Installing Tmux Plugin Manager..." "$DOTFILES/install/tpm.sh"
+run_script_step "📺 Step 5/8" "tpm" "Installing Tmux Plugin Manager..." "$DOTFILES/install/tpm.sh"
 
 # Step 6: Create Symlinks
-run_script_step "🔗 Step 6/7" "links" "Creating symlinks..." "$DOTFILES/install/link.sh"
+run_script_step "🔗 Step 6/8" "links" "Creating symlinks..." "$DOTFILES/install/link.sh"
 
-# Step 7: Set default shell
-echo -e "\n🔧 Step 7/7: Configuring default shell..."
+# Step 7: Git tooling
+run_script_step "🧩 Step 7/8" "git" "Installing and configuring Git tooling..." "$DOTFILES/install/git.sh"
+
+# Step 8: Set default shell
+echo -e "\n🔧 Step 8/8: Configuring default shell..."
 if is_step_completed "default_shell"; then
     echo "Already completed, skipping."
 elif [[ "$SHELL" != *"zsh"* ]]; then

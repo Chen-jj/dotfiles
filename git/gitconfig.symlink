@@ -15,3 +15,16 @@
 [trace2]
 	normalTarget = /Users/bytedance/.gitlog/log
 	normalbrief = true
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	line-numbers = true
+	side-by-side = true
+	syntax-theme = Dracula
+	navigate = true
+[merge]
+	conflictstyle = diff3
+[safe]
+	directory = *

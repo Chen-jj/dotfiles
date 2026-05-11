@@ -32,6 +32,7 @@ brew install fzf      # Fuzzy finder (Ctrl+R history, Ctrl+T files)
 brew install zsh
 brew install zsh-completions
 brew install git
+brew install git-delta
 brew install autojump
 brew install tmux
 brew install reattach-to-user-namespace
