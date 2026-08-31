@@ -77,5 +77,5 @@ setopt SHARE_HISTORY
 # =============================================================================
 # Editor
 # =============================================================================
-export EDITOR="${EDITOR:-vim}"
+export EDITOR="${EDITOR:-code --wait}"
 export VISUAL="${VISUAL:-$EDITOR}"
