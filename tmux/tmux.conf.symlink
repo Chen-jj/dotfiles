@@ -41,6 +41,11 @@ set-option -g set-titles on
 set-option -g set-titles-string "#T - #W"
 set-window-option -g xterm-keys on
 
+# 让 Shift+Enter / Ctrl+Enter 等带修饰键的按键穿透给应用(如 pi 的 Shift+Enter 换行)
+# 需 tmux >= 3.5 (extended-keys-format);否则只保留第一行
+set -g extended-keys on
+set -g extended-keys-format csi-u
+
 bind Y setw synchronize-panes
 
 ############
